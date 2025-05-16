@@ -12,13 +12,21 @@ import { useChat } from "../contexts/ChatContext";
 import { Sun, Moon, User, LogOut, Plus, Users } from "lucide-react";
 
 const ChatHeader = () => {
-  const { activeRoom, activeProfile, logout, toggleDarkMode, isDarkMode, userProfiles, switchProfile } = useChat();
+  const { 
+    activeRoom, 
+    activeProfile, 
+    logout, 
+    toggleDarkMode, 
+    isDarkMode, 
+    userProfiles, 
+    switchProfile 
+  } = useChat();
 
   return (
     <header className="border-b bg-card">
       <div className="flex justify-between items-center h-16 px-4">
         <div className="flex items-center">
-          <h1 className="text-xl font-bold">
+          <h1 className="text-xl font-bold truncate max-w-[200px]">
             {activeRoom?.name || "Chat"}
           </h1>
         </div>
@@ -40,7 +48,7 @@ const ChatHeader = () => {
                     />
                   )}
                 </div>
-                <span className="max-w-[100px] truncate">{activeProfile?.name}</span>
+                <span className="max-w-[100px] truncate hidden sm:inline">{activeProfile?.name}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -69,11 +77,7 @@ const ChatHeader = () => {
               <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={() => {
-                  const name = prompt("Enter profile name:");
-                  if (name) {
-                    // Open profile creator modal here
-                    console.log("Create profile:", name);
-                  }
+                  document.getElementById("profile-modal-trigger")?.click();
                 }}
               >
                 <Plus className="mr-2 h-4 w-4" />

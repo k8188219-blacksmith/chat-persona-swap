@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import ChatHeader from "./ChatHeader";
 import ChatSidebar from "./ChatSidebar";
@@ -6,14 +7,19 @@ import MessageInput from "./MessageInput";
 import ProfileModal from "./ProfileModal";
 import { Button } from "@/components/ui/button";
 import { UserProfile, useChat } from "../contexts/ChatContext";
-import { Plus, User } from "lucide-react";
+import { Menu } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 const ChatInterface = () => {
   const {
     userProfiles,
     joinRoom
   } = useChat();
+  
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<UserProfile | undefined>(undefined);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   // Check URL for room ID
   useEffect(() => {
@@ -23,16 +29,35 @@ const ChatInterface = () => {
       joinRoom(roomId);
     }
   }, [joinRoom]);
+
   const handleCreateProfile = () => {
     setSelectedProfile(undefined);
     setIsProfileModalOpen(true);
   };
+
   const handleEditProfile = (profile: UserProfile) => {
     setSelectedProfile(profile);
     setIsProfileModalOpen(true);
   };
-  return <div className="flex h-screen overflow-hidden bg-background">
-      <ChatSidebar />
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Mobile sidebar toggle */}
+      {isMobile && (
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="fixed top-3 left-3 z-50"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      )}
+
+      {/* Sidebar with conditional classes for mobile */}
+      <div className={`${isMobile ? (isSidebarOpen ? 'fixed inset-y-0 left-0 z-40 w-64' : 'hidden') : 'block'}`}>
+        <ChatSidebar />
+      </div>
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <ChatHeader />
@@ -44,13 +69,17 @@ const ChatInterface = () => {
         <MessageInput />
       </div>
 
-      {/* Floating button for creating profiles */}
-      <Button onClick={handleCreateProfile} className="fixed bottom-20 right-4 rounded-full w-12 h-12 shadow-lg bg-violet-500 hover:bg-violet-400">
-        <Plus className="h-5 w-5" />
-      </Button>
+      {/* Hidden button to trigger the profile modal */}
+      <button 
+        id="profile-modal-trigger" 
+        className="hidden"
+        onClick={handleCreateProfile}
+      />
 
       {/* Profile Modal */}
       <ProfileModal profile={selectedProfile} isOpen={isProfileModalOpen} onOpenChange={setIsProfileModalOpen} />
-    </div>;
+    </div>
+  );
 };
+
 export default ChatInterface;

@@ -57,8 +57,8 @@ export default {
         chat: {
           light: "#f0f4f9",
           dark: "#1E1E2E",
-          primary: "#6366f1",
-          secondary: "#8b5cf6",
+          primary: "#8b5cf6",
+          secondary: "#a78bfa",
         },
       },
       borderRadius: {
