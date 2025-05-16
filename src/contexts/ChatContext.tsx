@@ -38,7 +38,7 @@ type ChatContextType = {
   userProfiles: UserProfile[];
   activeProfile: UserProfile | null;
   switchProfile: (profileId: string) => void;
-  createProfile: (profile: Partial<UserProfile>) => void;
+  createProfile: (profile: Partial<UserProfile>) => UserProfile;
   editProfile: (id: string, profile: Partial<UserProfile>) => void;
   deleteProfile: (id: string) => void;
   rooms: Room[];
@@ -60,7 +60,7 @@ const ChatContext = createContext<ChatContextType>({
   userProfiles: [],
   activeProfile: null,
   switchProfile: () => {},
-  createProfile: () => {},
+  createProfile: () => ({ id: "", name: "", avatar: "" }),
   editProfile: () => {},
   deleteProfile: () => {},
   rooms: [],
@@ -128,7 +128,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setActiveProfile(newProfile);
     setIsLoggedIn(true);
 
-    // Create a default room
+    // Create a default room only after setting the active profile
     const defaultRoom = createRoom("General");
     setActiveRoom(defaultRoom);
 
@@ -165,7 +165,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Create a new profile
-  const createProfile = (profile: Partial<UserProfile>) => {
+  const createProfile = (profile: Partial<UserProfile>): UserProfile => {
     const newProfile: UserProfile = {
       id: uuidv4(),
       name: profile.name || "Anonymous",
