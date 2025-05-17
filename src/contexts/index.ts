@@ -1,2 +1,2 @@
-export { ChatContext, ChatProvider, useChat } from './ChatContext';
+export { ChatProvider, useChat } from './ChatContext';
 export type { UserProfile, Message, Room } from '../types/chat';

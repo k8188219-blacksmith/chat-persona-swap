@@ -71,3 +71,44 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Convex
+
+```bash
+# Copy the docker-compose.yml file locally
+npx degit get-convex/convex-backend/self-hosted/docker/docker-compose.yml docker-compose.yml
+
+# replace all http://127.0.0.1 with public url https://[codespace-url]-3210.app.github.dev
+
+# set url visibility to public
+
+# Pull the latest docker images
+docker compose pull
+# Run the containers
+docker compose up
+# Generate an admin key to authorize deployments and dashboard access
+docker compose exec backend ./generate_admin_key.sh
+```
+
+## Convex Auth
+
+run `generateKeys.mjs` to get keys and paste them to Convex Dashboard -> Settings -> Environment Variables
+
+```javascript
+// generateKeys.mjs
+import { exportJWK, exportPKCS8, generateKeyPair } from 'jose';
+
+const keys = await generateKeyPair('RS256', {
+  extractable: true,
+});
+const privateKey = await exportPKCS8(keys.privateKey);
+const publicKey = await exportJWK(keys.publicKey);
+const jwks = JSON.stringify({ keys: [{ use: 'sig', ...publicKey }] });
+
+process.stdout.write(
+  `JWT_PRIVATE_KEY="${privateKey.trimEnd().replace(/\n/g, ' ')}"`,
+);
+process.stdout.write('\n');
+process.stdout.write(`JWKS=${jwks}`);
+process.stdout.write('\n');
+```

@@ -1,13 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useChat } from '../contexts/ChatContext';
+import { useChat } from '../contexts';
 import { fileToBase64, validateImageFile } from '../utils/fileUtils';
 import { toast } from '@/components/ui/use-toast';
 import { Send, Image, X } from 'lucide-react';
 
 const MessageInput = () => {
-  const { sendMessage, activeRoom } = useChat();
+  const { sendMessage, activeRoom, activeProfile } = useChat();
   const [message, setMessage] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -16,7 +16,7 @@ const MessageInput = () => {
   const handleSendMessage = () => {
     if ((!message.trim() && !imagePreview) || !activeRoom) return;
 
-    sendMessage(message, imagePreview || undefined);
+    sendMessage(message, activeProfile.name);
     setMessage('');
     setImagePreview(null);
   };

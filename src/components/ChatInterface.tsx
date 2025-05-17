@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ChatHeader from './ChatHeader';
 import ChatSidebar from './ChatSidebar';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
 import ProfileModal from './ProfileModal';
 import { Button } from '@/components/ui/button';
-import { UserProfile, useChat } from '../contexts/ChatContext';
+import { UserProfile, useChat } from '../contexts';
 import { Menu } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const ChatInterface = () => {
-  const { userProfiles, joinRoom } = useChat();
+  const { joinRoom } = useChat();
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<

@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { ChatContext } from './ChatContext';
 import { getRandomAvatar } from '../utils/chatUtils';
-import { UserProfile, Message, Room } from '../types/chat';
+import { UserProfile, Room } from '../types/chat';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
-// Create a provider component
-export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  // App state
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]);
-  const [activeProfile, setActiveProfile] = useState<UserProfile | null>(null);
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [activeRoom, setActiveRoom] = useState<Room | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
+const useDarkMode = () => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedMode = localStorage.getItem('darkMode');
     return savedMode
@@ -37,46 +28,30 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsDarkMode(!isDarkMode);
   };
 
-  // Login function
-  const login = (initialProfile: Partial<UserProfile>) => {
-    const newProfile: UserProfile = {
-      id: uuidv4(),
-      name: initialProfile.name || 'Anonymous',
-      avatar: initialProfile.avatar || getRandomAvatar(),
-      color: initialProfile.color || '#6366f1',
-    };
+  return { isDarkMode, toggleDarkMode };
+};
 
-    setUserProfiles([newProfile]);
-    setActiveProfile(newProfile);
-    setIsLoggedIn(true);
+const initProfile: UserProfile = {
+  id: uuidv4(),
+  name: 'Anonymous',
+  avatar: getRandomAvatar(),
+  color: '#6366f1',
+};
 
-    // Create a default room only after setting the active profile
-    const defaultRoom = createRoom('General');
-    setActiveRoom(defaultRoom);
+const initRoom: Room = {
+  id: uuidv4(),
+  name: 'General',
+  members: [], // not used
+};
 
-    // Simulate welcome message
-    const welcomeMessage: Message = {
-      id: uuidv4(),
-      roomId: defaultRoom.id,
-      text: `Welcome to the chat, ${newProfile.name}!`,
-      senderId: 'system',
-      senderName: 'ChatApp',
-      senderAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=ChatApp',
-      timestamp: Date.now(),
-    };
-
-    setMessages([welcomeMessage]);
-  };
-
-  // Logout function
-  const logout = () => {
-    setIsLoggedIn(false);
-    setActiveProfile(null);
-    setUserProfiles([]);
-    setActiveRoom(null);
-    setRooms([]);
-    setMessages([]);
-  };
+const useProfile = () => {
+  // App state
+  const [userProfiles, setUserProfiles] = useState<UserProfile[]>([
+    initProfile,
+  ]);
+  const [activeProfile, setActiveProfile] = useState<UserProfile | null>(
+    initProfile,
+  );
 
   // Switch active profile
   const switchProfile = (profileId: string) => {
@@ -125,15 +100,56 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
   };
+  return {
+    userProfiles,
+    activeProfile,
+    switchProfile,
+    createProfile,
+    editProfile,
+    deleteProfile,
+  };
+};
+
+const useMessages = (uuid?: string) => {
+  const room = useQuery(api.rooms.getRoom, uuid ? { uuid } : 'skip');
+  const messages =
+    useQuery(
+      api.rooms.getRoomMessages,
+      room?._id ? { roomId: room._id } : 'skip',
+    ) || [];
+  const sendMessage = useMutation(api.messages.sendMessage);
+
+  async function handleSendMessage(msg: string, user: string) {
+    if (!msg.trim()) return;
+
+    await sendMessage({
+      roomId: room._id,
+      content: msg,
+      sender: user,
+      type: 'text',
+    });
+  }
+
+  return { messages, handleSendMessage };
+};
+
+export const useChatContext = () => {
+  // App state
+  const { activeProfile, ...aaa } = useProfile();
+  const dark = useDarkMode();
+  const [rooms, setRooms] = useState<Room[]>([initRoom]);
+  const [activeRoom, setActiveRoom] = useState<Room>(initRoom);
+  const { messages, handleSendMessage } = useMessages(activeRoom?.id);
+  const createRoom = useMutation(api.rooms.createRoom);
 
   // Create a new room
-  const createRoom = (name: string): Room => {
+  const handleCreateRoom = async (name: string) => {
     if (!activeProfile) throw new Error('No active profile');
+    const { uuid } = await createRoom({});
 
     const newRoom: Room = {
-      id: uuidv4(),
+      id: uuid,
       name,
-      createdBy: activeProfile.id,
       members: [activeProfile.id],
     };
 
@@ -152,7 +168,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       const newRoom: Room = {
         id: roomId,
         name: `Room ${roomId.substring(0, 5)}`,
-        createdBy: 'unknown',
         members: [activeProfile.id],
       };
       setRooms((prev) => [...prev, newRoom]);
@@ -186,47 +201,33 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   // Send a message
-  const sendMessage = (text: string, imageUrl?: string) => {
-    if (!activeProfile || !activeRoom) return;
+  // const sendMessage = (text: string, imageUrl?: string) => {
+  //   if (!activeProfile || !activeRoom) return;
 
-    const newMessage: Message = {
-      id: uuidv4(),
-      roomId: activeRoom.id,
-      text,
-      imageUrl,
-      senderId: activeProfile.id,
-      senderName: activeProfile.name,
-      senderAvatar: activeProfile.avatar,
-      timestamp: Date.now(),
-    };
+  //   const newMessage: Message = {
+  //     id: uuidv4(),
+  //     roomId: activeRoom.id,
+  //     text,
+  //     imageUrl,
+  //     senderId: activeProfile.id,
+  //     senderName: activeProfile.name,
+  //     senderAvatar: activeProfile.avatar,
+  //     timestamp: Date.now(),
+  //   };
 
-    setMessages((prev) => [...prev, newMessage]);
+  //   setMessages((prev) => [...prev, newMessage]);
+  // };
+
+  return {
+    activeProfile,
+    ...aaa,
+    rooms,
+    activeRoom,
+    createRoom: handleCreateRoom,
+    joinRoom,
+    setActiveRoom: setActiveRoomById,
+    messages,
+    sendMessage: handleSendMessage,
+    ...dark,
   };
-
-  return (
-    <ChatContext.Provider
-      value={{
-        isLoggedIn,
-        login,
-        logout,
-        userProfiles,
-        activeProfile,
-        switchProfile,
-        createProfile,
-        editProfile,
-        deleteProfile,
-        rooms,
-        activeRoom,
-        createRoom,
-        joinRoom,
-        setActiveRoom: setActiveRoomById,
-        messages,
-        sendMessage,
-        isDarkMode,
-        toggleDarkMode,
-      }}
-    >
-      {children}
-    </ChatContext.Provider>
-  );
 };

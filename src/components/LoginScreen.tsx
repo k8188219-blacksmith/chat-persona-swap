@@ -10,13 +10,15 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useChat } from '../contexts/ChatContext';
+import { useChat } from '../contexts';
 import { fileToBase64, validateImageFile } from '../utils/fileUtils';
 import { toast } from '@/components/ui/use-toast';
 import { Sun, Moon, User, Upload } from 'lucide-react';
+import { useAuthActions } from '@convex-dev/auth/react';
 
 const LoginScreen: React.FC = () => {
-  const { login, isDarkMode, toggleDarkMode } = useChat();
+  const { isDarkMode, toggleDarkMode } = useChat();
+  const { signIn } = useAuthActions();
   const [username, setUsername] = useState('');
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,13 +54,7 @@ const LoginScreen: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Use default name if empty
-    const name = username.trim() || 'Anonymous';
-
-    login({
-      name,
-      avatar: avatarPreview || undefined,
-    });
+    signIn('anonymous');
   };
 
   return (

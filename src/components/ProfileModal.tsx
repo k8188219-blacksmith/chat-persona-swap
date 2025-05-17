@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { UserProfile, useChat } from '../contexts/ChatContext';
+import { UserProfile, useChat } from '../contexts';
 import { fileToBase64, validateImageFile } from '../utils/fileUtils';
 import { toast } from '@/components/ui/use-toast';
 import { User, Upload, Trash } from 'lucide-react';

@@ -1,15 +1,16 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useChat } from '../contexts/ChatContext';
+import { useChat } from '../contexts';
+import { getRandomAvatar } from '@/utils/chatUtils';
+
+const avatar = getRandomAvatar();
 
 const MessageList = () => {
-  const { messages, activeRoom, activeProfile } = useChat();
+  const { messages, activeProfile } = useChat();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Filter messages for active room
-  const roomMessages = messages.filter(
-    (message) => message.roomId === activeRoom?.id,
-  );
+  const roomMessages = messages;
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -32,18 +33,18 @@ const MessageList = () => {
           </div>
         ) : (
           roomMessages.map((message) => {
-            const isCurrentUser = message.senderId === activeProfile?.id;
+            const isCurrentUser = message.sender === activeProfile?.name;
             return (
               <div
-                key={message.id}
+                key={message._id}
                 className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} animate-slide-in`}
               >
                 {!isCurrentUser && (
                   <div className="flex-shrink-0 mr-2">
                     <div className="w-8 h-8 rounded-full overflow-hidden">
                       <img
-                        src={message.senderAvatar}
-                        alt={message.senderName}
+                        src={avatar}
+                        alt={message.sender}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -52,7 +53,7 @@ const MessageList = () => {
                 <div className="flex flex-col max-w-[70%]">
                   {!isCurrentUser && (
                     <span className="text-xs text-muted-foreground mb-1">
-                      {message.senderName}
+                      {message.sender}
                     </span>
                   )}
                   <div
@@ -62,8 +63,8 @@ const MessageList = () => {
                         : 'message-bubble-other'
                     }`}
                   >
-                    {message.text}
-                    {message.imageUrl && (
+                    {message.content}
+                    {/* {message.imageUrl && (
                       <div className="mt-2">
                         <img
                           src={message.imageUrl}
@@ -71,10 +72,10 @@ const MessageList = () => {
                           className="max-w-full rounded-md"
                         />
                       </div>
-                    )}
+                    )} */}
                   </div>
                   <span className="text-xs text-muted-foreground mt-1 self-end">
-                    {new Date(message.timestamp).toLocaleTimeString([], {
+                    {new Date(message.createdAt).toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit',
                     })}
@@ -84,8 +85,8 @@ const MessageList = () => {
                   <div className="flex-shrink-0 ml-2">
                     <div className="w-8 h-8 rounded-full overflow-hidden">
                       <img
-                        src={message.senderAvatar}
-                        alt={message.senderName}
+                        src={avatar}
+                        alt={message.sender}
                         className="w-full h-full object-cover"
                       />
                     </div>

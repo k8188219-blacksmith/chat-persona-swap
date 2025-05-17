@@ -7,14 +7,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useChat } from '../contexts/ChatContext';
-import { Sun, Moon, User, LogOut, Plus, Users } from 'lucide-react';
+import { useChat } from '../contexts';
+import { Sun, Moon, LogOut, Plus } from 'lucide-react';
+import { useAuthActions } from '@convex-dev/auth/react';
 
 const ChatHeader = () => {
+  const { signOut } = useAuthActions();
   const {
     activeRoom,
     activeProfile,
-    logout,
     toggleDarkMode,
     isDarkMode,
     userProfiles,
@@ -91,7 +92,7 @@ const ChatHeader = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer text-destructive focus:text-destructive"
-                onClick={logout}
+                onClick={signOut}
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout

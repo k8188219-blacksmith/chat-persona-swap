@@ -1,11 +1,19 @@
-import { useChat } from '../contexts/ChatContext';
 import LoginScreen from '../components/LoginScreen';
 import ChatInterface from '../components/ChatInterface';
+import { Authenticated, Unauthenticated } from 'convex/react';
 
 const Index = () => {
-  const { isLoggedIn } = useChat();
 
-  return isLoggedIn ? <ChatInterface /> : <LoginScreen />;
+  return (
+    <>
+      <Authenticated>
+        <ChatInterface />
+      </Authenticated>
+      <Unauthenticated>
+        <LoginScreen />
+      </Unauthenticated>
+    </>
+  );
 };
 
 export default Index;

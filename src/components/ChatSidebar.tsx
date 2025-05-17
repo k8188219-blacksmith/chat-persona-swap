@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { useChat } from '../contexts/ChatContext';
-import { Plus, Link, X } from 'lucide-react';
+import { useChat } from '../contexts';
+import { Plus, Link } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -13,20 +13,18 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const ChatSidebar = () => {
   const { rooms, activeRoom, createRoom, setActiveRoom, joinRoom } = useChat();
 
-  const isMobile = useIsMobile();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
   const [newRoomName, setNewRoomName] = useState('');
   const [roomId, setRoomId] = useState('');
 
-  const handleCreateRoom = () => {
+  const handleCreateRoom = async () => {
     if (!newRoomName.trim()) return;
-    const room = createRoom(newRoomName.trim());
+    const room = await createRoom(newRoomName.trim());
     setActiveRoom(room.id);
     setNewRoomName('');
     setIsCreateDialogOpen(false);
