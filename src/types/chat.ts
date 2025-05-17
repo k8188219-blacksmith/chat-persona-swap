@@ -1,4 +1,3 @@
-
 // Define the user profile type
 export type UserProfile = {
   id: string;

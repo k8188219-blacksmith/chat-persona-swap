@@ -1,5 +1,4 @@
-
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,19 +6,19 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useChat } from "../contexts/ChatContext";
-import { Sun, Moon, User, LogOut, Plus, Users } from "lucide-react";
+} from '@/components/ui/dropdown-menu';
+import { useChat } from '../contexts/ChatContext';
+import { Sun, Moon, User, LogOut, Plus, Users } from 'lucide-react';
 
 const ChatHeader = () => {
-  const { 
-    activeRoom, 
-    activeProfile, 
-    logout, 
-    toggleDarkMode, 
-    isDarkMode, 
-    userProfiles, 
-    switchProfile 
+  const {
+    activeRoom,
+    activeProfile,
+    logout,
+    toggleDarkMode,
+    isDarkMode,
+    userProfiles,
+    switchProfile,
   } = useChat();
 
   return (
@@ -27,13 +26,17 @@ const ChatHeader = () => {
       <div className="flex justify-between items-center h-16 px-4">
         <div className="flex items-center">
           <h1 className="text-xl font-bold truncate max-w-[200px]">
-            {activeRoom?.name || "Chat"}
+            {activeRoom?.name || 'Chat'}
           </h1>
         </div>
 
         <div className="flex items-center space-x-2">
           <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            {isDarkMode ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
           </Button>
 
           <DropdownMenu>
@@ -48,7 +51,9 @@ const ChatHeader = () => {
                     />
                   )}
                 </div>
-                <span className="max-w-[100px] truncate hidden sm:inline">{activeProfile?.name}</span>
+                <span className="max-w-[100px] truncate hidden sm:inline">
+                  {activeProfile?.name}
+                </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -77,7 +82,7 @@ const ChatHeader = () => {
               <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={() => {
-                  document.getElementById("profile-modal-trigger")?.click();
+                  document.getElementById('profile-modal-trigger')?.click();
                 }}
               >
                 <Plus className="mr-2 h-4 w-4" />

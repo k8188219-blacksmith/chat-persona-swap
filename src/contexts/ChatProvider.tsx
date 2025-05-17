@@ -1,12 +1,13 @@
-
-import React, { useState, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { ChatContext } from "./ChatContext";
-import { getRandomAvatar } from "../utils/chatUtils";
-import { UserProfile, Message, Room } from "../types/chat";
+import React, { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { ChatContext } from './ChatContext';
+import { getRandomAvatar } from '../utils/chatUtils';
+import { UserProfile, Message, Room } from '../types/chat';
 
 // Create a provider component
-export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   // App state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]);
@@ -15,18 +16,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [activeRoom, setActiveRoom] = useState<Room | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedMode = localStorage.getItem("darkMode");
-    return savedMode ? JSON.parse(savedMode) : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const savedMode = localStorage.getItem('darkMode');
+    return savedMode
+      ? JSON.parse(savedMode)
+      : window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   // Initialize dark mode class
   useEffect(() => {
     if (isDarkMode) {
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove('dark');
     }
-    localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
   // Toggle dark mode
@@ -38,9 +41,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = (initialProfile: Partial<UserProfile>) => {
     const newProfile: UserProfile = {
       id: uuidv4(),
-      name: initialProfile.name || "Anonymous",
+      name: initialProfile.name || 'Anonymous',
       avatar: initialProfile.avatar || getRandomAvatar(),
-      color: initialProfile.color || "#6366f1",
+      color: initialProfile.color || '#6366f1',
     };
 
     setUserProfiles([newProfile]);
@@ -48,7 +51,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoggedIn(true);
 
     // Create a default room only after setting the active profile
-    const defaultRoom = createRoom("General");
+    const defaultRoom = createRoom('General');
     setActiveRoom(defaultRoom);
 
     // Simulate welcome message
@@ -56,9 +59,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: uuidv4(),
       roomId: defaultRoom.id,
       text: `Welcome to the chat, ${newProfile.name}!`,
-      senderId: "system",
-      senderName: "ChatApp",
-      senderAvatar: "https://api.dicebear.com/7.x/bottts/svg?seed=ChatApp",
+      senderId: 'system',
+      senderName: 'ChatApp',
+      senderAvatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=ChatApp',
       timestamp: Date.now(),
     };
 
@@ -87,9 +90,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const createProfile = (profile: Partial<UserProfile>): UserProfile => {
     const newProfile: UserProfile = {
       id: uuidv4(),
-      name: profile.name || "Anonymous",
+      name: profile.name || 'Anonymous',
       avatar: profile.avatar || getRandomAvatar(),
-      color: profile.color || "#6366f1",
+      color: profile.color || '#6366f1',
     };
 
     setUserProfiles((prev) => [...prev, newProfile]);
@@ -99,13 +102,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Edit a profile
   const editProfile = (id: string, profile: Partial<UserProfile>) => {
     setUserProfiles((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, ...profile } : p
-      )
+      prev.map((p) => (p.id === id ? { ...p, ...profile } : p)),
     );
 
     if (activeProfile?.id === id) {
-      setActiveProfile((prev) => prev ? { ...prev, ...profile } : null);
+      setActiveProfile((prev) => (prev ? { ...prev, ...profile } : null));
     }
   };
 
@@ -115,7 +116,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (userProfiles.length <= 1) return;
 
     setUserProfiles((prev) => prev.filter((p) => p.id !== id));
-    
+
     // If active profile is deleted, switch to another one
     if (activeProfile?.id === id) {
       const newActiveProfile = userProfiles.find((p) => p.id !== id);
@@ -127,8 +128,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Create a new room
   const createRoom = (name: string): Room => {
-    if (!activeProfile) throw new Error("No active profile");
-    
+    if (!activeProfile) throw new Error('No active profile');
+
     const newRoom: Room = {
       id: uuidv4(),
       name,
@@ -145,13 +146,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!activeProfile) return false;
 
     const roomExists = rooms.some((room) => room.id === roomId);
-    
+
     if (!roomExists) {
       // Create the room if it doesn't exist (for direct link joins)
       const newRoom: Room = {
         id: roomId,
         name: `Room ${roomId.substring(0, 5)}`,
-        createdBy: "unknown",
+        createdBy: 'unknown',
         members: [activeProfile.id],
       };
       setRooms((prev) => [...prev, newRoom]);
@@ -164,8 +165,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       prev.map((room) =>
         room.id === roomId && !room.members.includes(activeProfile.id)
           ? { ...room, members: [...room.members, activeProfile.id] }
-          : room
-      )
+          : room,
+      ),
     );
 
     const room = rooms.find((r) => r.id === roomId);

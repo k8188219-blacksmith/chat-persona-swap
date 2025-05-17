@@ -1,7 +1,6 @@
-
-import React, { useEffect, useRef } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useChat } from "../contexts/ChatContext";
+import React, { useEffect, useRef } from 'react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useChat } from '../contexts/ChatContext';
 
 const MessageList = () => {
   const { messages, activeRoom, activeProfile } = useChat();
@@ -9,13 +8,15 @@ const MessageList = () => {
 
   // Filter messages for active room
   const roomMessages = messages.filter(
-    (message) => message.roomId === activeRoom?.id
+    (message) => message.roomId === activeRoom?.id,
   );
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     if (scrollAreaRef.current) {
-      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      const scrollContainer = scrollAreaRef.current.querySelector(
+        '[data-radix-scroll-area-viewport]',
+      );
       if (scrollContainer) {
         scrollContainer.scrollTop = scrollContainer.scrollHeight;
       }
@@ -35,7 +36,7 @@ const MessageList = () => {
             return (
               <div
                 key={message.id}
-                className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} animate-slide-in`}
+                className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} animate-slide-in`}
               >
                 {!isCurrentUser && (
                   <div className="flex-shrink-0 mr-2">
@@ -56,7 +57,9 @@ const MessageList = () => {
                   )}
                   <div
                     className={`message-bubble ${
-                      isCurrentUser ? "message-bubble-user" : "message-bubble-other"
+                      isCurrentUser
+                        ? 'message-bubble-user'
+                        : 'message-bubble-other'
                     }`}
                   >
                     {message.text}
@@ -71,9 +74,9 @@ const MessageList = () => {
                     )}
                   </div>
                   <span className="text-xs text-muted-foreground mt-1 self-end">
-                    {new Date(message.timestamp).toLocaleTimeString([], { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
+                    {new Date(message.timestamp).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
                     })}
                   </span>
                 </div>

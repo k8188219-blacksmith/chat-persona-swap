@@ -1,6 +1,5 @@
-
-import React, { createContext } from "react";
-import { ChatContextType } from "../types/chat";
+import React, { createContext } from 'react';
+import { ChatContextType } from '../types/chat';
 
 // Create the context with default values
 export const ChatContext = createContext<ChatContextType>({
@@ -10,12 +9,12 @@ export const ChatContext = createContext<ChatContextType>({
   userProfiles: [],
   activeProfile: null,
   switchProfile: () => {},
-  createProfile: () => ({ id: "", name: "", avatar: "" }),
+  createProfile: () => ({ id: '', name: '', avatar: '' }),
   editProfile: () => {},
   deleteProfile: () => {},
   rooms: [],
   activeRoom: null,
-  createRoom: () => ({ id: "", name: "", createdBy: "", members: [] }),
+  createRoom: () => ({ id: '', name: '', createdBy: '', members: [] }),
   joinRoom: () => false,
   setActiveRoom: () => {},
   messages: [],
@@ -25,6 +24,6 @@ export const ChatContext = createContext<ChatContextType>({
 });
 
 // Re-export components for backwards compatibility
-export { ChatProvider } from "./ChatProvider";
-export { useChat } from "../hooks/useChat";
-export type { UserProfile, Message, Room } from "../types/chat";
+export { ChatProvider } from './ChatProvider';
+export { useChat } from '../hooks/useChat';
+export type { UserProfile, Message, Room } from '../types/chat';
