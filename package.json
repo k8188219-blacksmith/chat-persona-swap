@@ -6,7 +6,8 @@
   "scripts": {
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "dev": "npm-run-all --parallel dev:frontend dev:backend",
+    "dev": "vite",
+    "dev:all": "npm-run-all --parallel dev:frontend dev:backend",
     "dev:frontend": "vite",
     "dev:backend": "convex dev",
     "lint": "eslint .",

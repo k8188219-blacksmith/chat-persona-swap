@@ -4,7 +4,11 @@ import { ConvexReactClient } from 'convex/react';
 import App from './App.tsx';
 import './index.css';
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
+const CONVEX_URL =
+  import.meta.env.VITE_CONVEX_URL ||
+  'https://bug-free-space-computing-machine-r4xw667v9p43wqj9-3210.app.github.dev';
+
+const convex = new ConvexReactClient(CONVEX_URL);
 
 createRoot(document.getElementById('root')!).render(
   <ConvexAuthProvider client={convex}>
