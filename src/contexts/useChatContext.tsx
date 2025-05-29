@@ -38,12 +38,6 @@ const initProfile: UserProfile = {
   color: '#6366f1',
 };
 
-const initRoom: Room = {
-  id: uuidv4(),
-  name: 'General',
-  members: [], // not used
-};
-
 const useProfile = () => {
   // App state
   const [userProfiles, setUserProfiles] = useState<UserProfile[]>([
@@ -137,8 +131,8 @@ export const useChatContext = () => {
   // App state
   const { activeProfile, ...aaa } = useProfile();
   const dark = useDarkMode();
-  const [rooms, setRooms] = useState<Room[]>([initRoom]);
-  const [activeRoom, setActiveRoom] = useState<Room>(initRoom);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [activeRoom, setActiveRoom] = useState<Room>();
   const { messages, handleSendMessage } = useMessages(activeRoom?.id);
   const createRoom = useMutation(api.rooms.createRoom);
 

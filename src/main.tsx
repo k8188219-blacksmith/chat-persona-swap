@@ -5,8 +5,7 @@ import App from './App.tsx';
 import './index.css';
 
 const CONVEX_URL =
-  import.meta.env.VITE_CONVEX_URL ||
-  'https://bug-free-space-computing-machine-r4xw667v9p43wqj9-3210.app.github.dev';
+  import.meta.env.VITE_CONVEX_URL || 'https://tangible-pika-944.convex.cloud';
 
 const convex = new ConvexReactClient(CONVEX_URL);
 

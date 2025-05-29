@@ -80,7 +80,8 @@
 
 /* Custom Chat App Styles */
 .message-bubble {
-  @apply rounded-2xl p-3 max-w-[80%] break-words;
+  @apply rounded-2xl p-3;
+  overflow-wrap: anywhere;
 }
 
 .message-bubble-user {
